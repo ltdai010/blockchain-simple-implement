@@ -1,9 +1,11 @@
-package main
+package blockchain
 
 import (
+	"blockchaintest/utils"
 	"bytes"
 	"crypto/sha256"
 	"log"
+	"math"
 	"math/big"
 )
 
@@ -12,10 +14,14 @@ type ProofOfWork struct {
 	target *big.Int
 }
 
+const targetBits = 24
+
+const maxNonce = math.MaxInt64
+
 //create a new proof of work
 func NewProofOfWork(b *Block) *ProofOfWork {
 	target := big.NewInt(1)
-	target.Lsh(target, uint(256-targetBits))
+	target.Lsh(target, uint(256 -targetBits))
 
 	pow := &ProofOfWork{
 		block:  b,
@@ -27,8 +33,8 @@ func NewProofOfWork(b *Block) *ProofOfWork {
 
 //prepare Data
 func (pow *ProofOfWork) prepareData(nonce int) []byte {
-	data := bytes.Join([][]byte{pow.block.PrevBlockHash, pow.block.HashTransaction(), IntToHex(pow.block.Timestamp),
-		IntToHex(int64(targetBits)), IntToHex(int64(nonce))}, []byte{})
+	data := bytes.Join([][]byte{pow.block.PrevBlockHash, pow.block.HashTransaction(), utils.IntToHex(pow.block.Timestamp),
+		utils.IntToHex(int64(targetBits)), utils.IntToHex(int64(nonce))}, []byte{})
 
 	return data
 }
@@ -52,7 +58,7 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		}
 	}
 
-	log.Println("finish mining block contain \"" + string(pow.block.Data) + "\"")
+	log.Println("finish mining block")
 	return nonce, hash[:]
 }
 

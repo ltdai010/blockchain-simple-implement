@@ -1,21 +1,26 @@
-package main
+package blockchain
 
 import (
+	"blockchaintest/consts"
 	"blockchaintest/drivers"
+	"bytes"
+	"crypto/ecdsa"
 	"encoding/hex"
-	"log"
-
+	"errors"
 	"github.com/OpenStars/EtcdBackendService/StringBigsetService/bigset/thrift/gen-go/openstars/core/bigset/generic"
+	"log"
 )
 
 type Blockchain struct {
 	tip []byte
 }
 
+const genesisCoinbaseData = "This blockchain created by Diaz, belong to everyone"
+
 func (bc *Blockchain) AddBlock(transactions []*Transaction) {
 	lastHash := []byte{}
 
-	it, err := drivers.GetBigsetClient().BsGetItem2(LASTHASH, generic.TItemKey("l"))
+	it, err := drivers.GetBigsetClient().BsGetItem2(consts.LASTHASH, generic.TItemKey("l"))
 	if err != nil {
 		log.Println(err, " blockchain.go:19")
 		return
@@ -26,7 +31,7 @@ func (bc *Blockchain) AddBlock(transactions []*Transaction) {
 	newBlock := NewBlock(transactions, lastHash)
 
 	lastHash = newBlock.Hash
-	_, err = drivers.GetBigsetClient().BsPutItem2(BLOCKCHAIN, &generic.TItem{
+	_, err = drivers.GetBigsetClient().BsPutItem2(consts.BLOCKCHAIN, &generic.TItem{
 		Key:   newBlock.Hash,
 		Value: newBlock.Serialize(),
 	})
@@ -34,7 +39,7 @@ func (bc *Blockchain) AddBlock(transactions []*Transaction) {
 		log.Println(err, " blockchain.go:33")
 		return
 	}
-	_, err = drivers.GetBigsetClient().BsPutItem2(LASTHASH, &generic.TItem{
+	_, err = drivers.GetBigsetClient().BsPutItem2(consts.LASTHASH, &generic.TItem{
 		Key:   []byte("l"),
 		Value: lastHash,
 	})
@@ -45,7 +50,7 @@ func (bc *Blockchain) AddBlock(transactions []*Transaction) {
 func (bc *Blockchain) MineBlock(transactions []*Transaction) {
 	lastHash := []byte{}
 
-	it, err := drivers.GetBigsetClient().BsGetItem2(LASTHASH, generic.TItemKey("l"))
+	it, err := drivers.GetBigsetClient().BsGetItem2(consts.LASTHASH, generic.TItemKey("l"))
 	if err != nil {
 		log.Println(err, " blockchain.go:19")
 		return
@@ -56,7 +61,7 @@ func (bc *Blockchain) MineBlock(transactions []*Transaction) {
 	newBlock := NewBlock(transactions, lastHash)
 
 	lastHash = newBlock.Hash
-	_, err = drivers.GetBigsetClient().BsPutItem2(BLOCKCHAIN, &generic.TItem{
+	_, err = drivers.GetBigsetClient().BsPutItem2(consts.BLOCKCHAIN, &generic.TItem{
 		Key:   newBlock.Hash,
 		Value: newBlock.Serialize(),
 	})
@@ -64,7 +69,7 @@ func (bc *Blockchain) MineBlock(transactions []*Transaction) {
 		log.Println(err, " blockchain.go:33")
 		return
 	}
-	_, err = drivers.GetBigsetClient().BsPutItem2(LASTHASH, &generic.TItem{
+	_, err = drivers.GetBigsetClient().BsPutItem2(consts.LASTHASH, &generic.TItem{
 		Key:   []byte("l"),
 		Value: lastHash,
 	})
@@ -77,7 +82,7 @@ func NewBlockchain(address string) *Blockchain {
 		log.Fatal("Blockchain not exist")
 	}
 
-	it, err := drivers.GetBigsetClient().BsGetItem2(LASTHASH, generic.TItemKey("l"))
+	it, err := drivers.GetBigsetClient().BsGetItem2(consts.LASTHASH, generic.TItemKey("l"))
 	if err != nil {
 		log.Println(err, " blockchain.go:50")
 		return nil
@@ -89,7 +94,7 @@ func NewBlockchain(address string) *Blockchain {
 }
 
 func dbExists() bool {
-	info, err := drivers.GetBigsetClient().GetBigSetInfoByName2(BLOCKCHAIN)
+	info, err := drivers.GetBigsetClient().GetBigSetInfoByName2(consts.BLOCKCHAIN)
 	if err != nil {
 		log.Println(err, " in check db exist")
 		return false
@@ -100,7 +105,7 @@ func dbExists() bool {
 	return true
 }
 
-func CreateBlockchain(address string) *Blockchain{
+func CreateBlockchain(address string) *Blockchain {
 	if dbExists() {
 		log.Fatal("Blockchain already exist")
 	}
@@ -108,7 +113,7 @@ func CreateBlockchain(address string) *Blockchain{
 	cbtx := NewCoinBaseTX(address, genesisCoinbaseData)
 	genesis := NewGenesisBlock(cbtx)
 
-	_, err := drivers.GetBigsetClient().BsPutItem2(BLOCKCHAIN, &generic.TItem{
+	_, err := drivers.GetBigsetClient().BsPutItem2(consts.BLOCKCHAIN, &generic.TItem{
 		Key:   genesis.Hash,
 		Value: genesis.Serialize(),
 	})
@@ -118,7 +123,7 @@ func CreateBlockchain(address string) *Blockchain{
 		return nil
 	}
 
-	_, err = drivers.GetBigsetClient().BsPutItem2(LASTHASH, &generic.TItem{
+	_, err = drivers.GetBigsetClient().BsPutItem2(consts.LASTHASH, &generic.TItem{
 		Key:   []byte("l"),
 		Value: genesis.Hash,
 	})
@@ -131,7 +136,55 @@ func (bc *Blockchain) Iterator() *BlockchainIterator {
 	return &BlockchainIterator{currentHash: bc.tip}
 }
 
-func (bc *Blockchain) FindUnspentTransactions(address string) []Transaction {
+func (bc *Blockchain) VerifyTransaction(tx *Transaction) bool {
+	prevTxs := map[string]Transaction{}
+
+	for _, vin := range tx.Vin {
+		prevTX, err := bc.FindTransaction(vin.Txid)
+		if err != nil {
+			log.Panic(err, " err verify transaction")
+		}
+		prevTxs[hex.EncodeToString(prevTX.ID)] = prevTX
+	}
+
+	return tx.Verify(prevTxs)
+}
+
+func (bc *Blockchain) SignTransaction(tx *Transaction, privKey ecdsa.PrivateKey) {
+	prevTXs := map[string]Transaction{}
+
+	for _, vin := range tx.Vin {
+		prevTX, err := bc.FindTransaction(vin.Txid)
+		if err != nil {
+			log.Panic(err, " error sign transaction")
+		}
+		prevTXs[hex.EncodeToString(prevTX.ID)] = prevTX
+	}
+
+	tx.Sign(privKey, prevTXs)
+}
+
+func (bc *Blockchain) FindTransaction(ID []byte) (Transaction, error) {
+	bci := bc.Iterator()
+
+	for {
+		block := bci.Next()
+
+		for _, tx := range block.Transactions {
+			if bytes.Compare(tx.ID, ID) == 0 {
+				return *tx, nil
+			}
+		}
+
+		if len(block.PrevBlockHash) == 0 {
+			break
+		}
+	}
+
+	return Transaction{}, errors.New("Transaction is not found")
+}
+
+func (bc *Blockchain) FindUnspentTransactions(pubKeyHash []byte) []Transaction {
 	unspentTXs := []Transaction{}
 	spentTXOs := map[string][]int{}
 
@@ -144,7 +197,7 @@ func (bc *Blockchain) FindUnspentTransactions(address string) []Transaction {
 			txID := hex.EncodeToString(tx.ID)
 
 		Outputs : 
-			for outIdx, out := range tx.VOut {
+			for outIdx, out := range tx.Vout {
 				if spentTXOs[txID] != nil {
 					for _, spentOut := range spentTXOs[txID] {
 						if spentOut == outIdx {
@@ -153,16 +206,16 @@ func (bc *Blockchain) FindUnspentTransactions(address string) []Transaction {
 					}
 				}
 
-				if out.CanBeUnlockedWith(address) {
+				if out.IsLockedWithKey(pubKeyHash) {
 					unspentTXs = append(unspentTXs, *tx)
 				}
 			}
 
 			if tx.IsCoinbase() == false {
-				for _, in := range tx.VIn {
-					if in.CanUnlockOutputWith(address) {
-						inTxID := hex.EncodeToString(in.TXid)
-						spentTXOs[inTxID] = append(spentTXOs[inTxID], in.VOut)
+				for _, in := range tx.Vin {
+					if in.UsesKey(pubKeyHash) {
+						inTxID := hex.EncodeToString(in.Txid)
+						spentTXOs[inTxID] = append(spentTXOs[inTxID], in.Vout)
 					}
 				}
 			}
@@ -174,14 +227,14 @@ func (bc *Blockchain) FindUnspentTransactions(address string) []Transaction {
 	return unspentTXs
 }
 
-func (bc *Blockchain) FindUTXO(address string) []TXOutput {
+func (bc *Blockchain) FindUTXO(pubKeyHash []byte) []TXOutput {
 	UTXOs := []TXOutput{}
 
-	unspentTx := bc.FindUnspentTransactions(address)
+	unspentTx := bc.FindUnspentTransactions(pubKeyHash)
 
 	for _, tx := range unspentTx {
-		for _, out := range tx.VOut {
-			if out.CanBeUnlockedWith(address) {
+		for _, out := range tx.Vout {
+			if out.IsLockedWithKey(pubKeyHash) {
 				UTXOs = append(UTXOs, out)
 			}
 		}
@@ -190,9 +243,9 @@ func (bc *Blockchain) FindUTXO(address string) []TXOutput {
 	return UTXOs
 }
 
-func (bc *Blockchain) FindSpendableOutputs(address string, amount int) (int, map[string][]int) {
+func (bc *Blockchain) FindSpendableOutputs(pubKeyHash []byte, amount int) (int, map[string][]int) {
 	unspentOutputs := map[string][]int{}
-	unspentTXs := bc.FindUnspentTransactions(address)
+	unspentTXs := bc.FindUnspentTransactions(pubKeyHash)
 
 	accumulated := 0
 
@@ -200,8 +253,8 @@ Work:
 	for _, tx := range unspentTXs {
 		txID := hex.EncodeToString(tx.ID)
 
-		for outIdx, out := range tx.VOut {
-			if out.CanBeUnlockedWith(address) && accumulated < amount {
+		for outIdx, out := range tx.Vout {
+			if out.IsLockedWithKey(pubKeyHash) && accumulated < amount {
 				accumulated += out.Value
 				unspentOutputs[txID] = append(unspentOutputs[txID], outIdx)
 

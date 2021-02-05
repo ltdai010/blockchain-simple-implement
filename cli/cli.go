@@ -1,32 +1,15 @@
-package main
+package cli
 
 import (
+	"blockchaintest/consts"
 	"flag"
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 )
 
 type CLI struct {}
 
-func (cli *CLI) createBlockchain(address string) {
-	CreateBlockchain(address)
-	fmt.Println("Done!")
-}
-
-func (cli *CLI) getBalance(address string) {
-	bc := NewBlockchain(address)
-
-	balance := 0
-	UTXOs := bc.FindUTXO(address)
-
-	for _, out := range UTXOs {
-		balance += out.Value
-	}
-
-	fmt.Printf("Balance of '%s': %d\n", address, balance)
-}
 
 func (cli *CLI) validateArgs() {
 	if len(os.Args) < 2 {
@@ -37,8 +20,10 @@ func (cli *CLI) validateArgs() {
 
 func (cli *CLI) printUsage() {
 	fmt.Println("Usage:")
-	fmt.Println("  getbalance -address ADDRESS - Get balance of ADDRESS")
 	fmt.Println("  createblockchain -address ADDRESS - Create a blockchain and send genesis block reward to ADDRESS")
+	fmt.Println("  getbalance -address ADDRESS - Get balance of ADDRESS")
+	fmt.Println("  createwallet - Generates a new key-pair and saves it into the wallet file")
+	fmt.Println("  listaddresses - Lists all addresses from the wallet file")
 	fmt.Println("  printchain - Print all the blocks of the blockchain")
 	fmt.Println("  send -from FROM -to TO -amount AMOUNT - Send AMOUNT of coins from FROM address to TO")
 }
@@ -46,36 +31,48 @@ func (cli *CLI) printUsage() {
 func (cli *CLI) Run() {
 	cli.validateArgs()
 
-	getBalanceCmd := flag.NewFlagSet(GETBALANCE, flag.ExitOnError)
-	createBlockchainCmd := flag.NewFlagSet(CREATEBLOCKCHAIN, flag.ExitOnError)
-	sendCmd := flag.NewFlagSet(SEND, flag.ExitOnError)
-	printBlockCmd := flag.NewFlagSet(PRINTCHAIN, flag.ExitOnError)
+	getBalanceCmd := flag.NewFlagSet(consts.GETBALANCE, flag.ExitOnError)
+	createBlockchainCmd := flag.NewFlagSet(consts.CREATEBLOCKCHAIN, flag.ExitOnError)
+	sendCmd := flag.NewFlagSet(consts.SEND, flag.ExitOnError)
+	printBlockCmd := flag.NewFlagSet(consts.PRINTCHAIN, flag.ExitOnError)
+	createWalletCmd := flag.NewFlagSet(consts.CREATEWALLET, flag.ExitOnError)
+	listAddressesCmd := flag.NewFlagSet(consts.LISTADDRESS, flag.ExitOnError)
 
-	getBalanceAddress := getBalanceCmd.String(ADDRESS, "", "The address to get balance")
-	createBlockchainAddress := createBlockchainCmd.String(ADDRESS, "", "The address to send genesis" +
+	getBalanceAddress := getBalanceCmd.String(consts.ADDRESS, "", "The address to get balance")
+	createBlockchainAddress := createBlockchainCmd.String(consts.ADDRESS, "", "The address to send genesis" +
 		" block reward to")
 	sendFrom := sendCmd.String("from", "", "Source wallet address")
 	sendTo := sendCmd.String("to", "", "Destination wallet address")
 	sendAmount := sendCmd.Int("amount", 0, "Amount to send")
 
 	switch os.Args[1] {
-	case GETBALANCE:
+	case consts.GETBALANCE:
 		err := getBalanceCmd.Parse(os.Args[2:])
 		if err != nil {
 			log.Println(err, " CLI.go:23")
 		}
-	case CREATEBLOCKCHAIN:
+	case consts.CREATEBLOCKCHAIN:
 		err := createBlockchainCmd.Parse(os.Args[2:])
 		if err != nil {
 			log.Panic(err)
 		}
-	case PRINTCHAIN:
+	case consts.PRINTCHAIN:
 		err := printBlockCmd.Parse(os.Args[2:])
 		if err != nil {
 			log.Println(err, " CLI.go:29")
 		}
-	case SEND:
+	case consts.SEND:
 		err := sendCmd.Parse(os.Args[2:])
+		if err != nil {
+			log.Panic(err)
+		}
+	case consts.CREATEWALLET:
+		err := createWalletCmd.Parse(os.Args[2:])
+		if err != nil {
+			log.Panic(err)
+		}
+	case consts.LISTADDRESS:
+		err := listAddressesCmd.Parse(os.Args[2:])
 		if err != nil {
 			log.Panic(err)
 		}
@@ -91,6 +88,14 @@ func (cli *CLI) Run() {
 		}
 
 		cli.getBalance(*getBalanceAddress)
+	}
+
+	if createWalletCmd.Parsed() {
+		cli.createWallet()
+	}
+
+	if listAddressesCmd.Parsed() {
+		cli.listAddresses()
 	}
 
 	if createBlockchainCmd.Parsed() {
@@ -116,36 +121,4 @@ func (cli *CLI) Run() {
 	return
 }
 
-func (cli *CLI) send(from, to string, amount int) {
-	bc := NewBlockchain(from)
 
-	tx := NewUTXOTransaction(from, to, amount, bc)
-	bc.MineBlock([]*Transaction{tx})
-	fmt.Println("Success!")
-}
-
-func (cli *CLI) printChain() {
-	bc := NewBlockchain("")
-
-	bci := bc.Iterator()
-
-	for {
-		block := bci.Next()
-
-		fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
-		fmt.Printf("Hash: %x\n", block.Hash)
-		pow := NewProofOfWork(block)
-		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
-		fmt.Println()
-
-		if len(block.PrevBlockHash) == 0 {
-			break
-		}
-	}
-}
-
-
-func main() {
-	cli := CLI{}
-	cli.Run()
-}

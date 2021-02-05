@@ -1,11 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="7c2e41c6-f1d6-475e-a37f-235428e8599d" name="Default Changelist" comment="" />
+    <list default="true" id="7c2e41c6-f1d6-475e-a37f-235428e8599d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/base58/base58.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blockchain/transaction.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blockchain/transaction_input.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blockchain/transaction_output.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blockchain/wallet.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/blockchain/wallets.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/cli_createblockchain.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/cli_createwallet.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/cli_getbalance.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/cli_listadress.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/cli_printchain.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cli/cli_send.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLI.go" beforeDir="false" afterPath="$PROJECT_DIR$/cli/cli.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/block.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/block.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/blockchain.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blockchain_iterator.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/blockchain_iterator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/const.go" beforeDir="false" afterPath="$PROJECT_DIR$/consts/const.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proof_of_work.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/proof_of_work.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/transaction.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
   <component name="Git.Settings">
@@ -15,26 +67,48 @@
     <option name="indexEntireGoPath" value="false" />
   </component>
   <component name="ProjectId" id="1o0kpaljtEM0aGUtsdthZfxfaxE" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../TaskManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cli" />
+      <recent name="$PROJECT_DIR$/utils" />
+      <recent name="$PROJECT_DIR$/blockchain" />
+      <recent name="$PROJECT_DIR$/base58" />
+      <recent name="$PROJECT_DIR$/consts" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
   </component>
   <component name="WindowStateProjectService">
-    <state x="860" y="340" width="530" height="605" key="FileChooserDialogImpl" timestamp="1612434431951">
+    <state x="860" y="340" width="530" height="605" key="FileChooserDialogImpl" timestamp="1612456355381">
       <screen x="0" y="34" width="1920" height="1046" />
     </state>
-    <state x="860" y="340" width="530" height="605" key="FileChooserDialogImpl/0.34.1920.1046@0.34.1920.1046" timestamp="1612434431951" />
+    <state x="860" y="340" width="530" height="605" key="FileChooserDialogImpl/0.34.1920.1046@0.34.1920.1046" timestamp="1612456355381" />
   </component>
 </project>
