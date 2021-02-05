@@ -20,32 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7c2e41c6-f1d6-475e-a37f-235428e8599d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/base58/base58.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/blockchain/transaction.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/blockchain/transaction_input.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/blockchain/transaction_output.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/blockchain/wallet.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/blockchain/wallets.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/cli_createblockchain.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/cli_createwallet.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/cli_getbalance.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/cli_listadress.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/cli_printchain.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cli/cli_send.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CLI.go" beforeDir="false" afterPath="$PROJECT_DIR$/cli/cli.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/block.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/block.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blockchain.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/blockchain.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blockchain_iterator.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/blockchain_iterator.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/const.go" beforeDir="false" afterPath="$PROJECT_DIR$/consts/const.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proof_of_work.go" beforeDir="false" afterPath="$PROJECT_DIR$/blockchain/proof_of_work.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/transaction.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utils.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,6 +81,10 @@
     <integration-enabled>true</integration-enabled>
   </component>
   <component name="WindowStateProjectService">
+    <state x="597" y="341" width="733" height="438" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1612523218628">
+      <screen x="0" y="34" width="1920" height="1046" />
+    </state>
+    <state x="597" y="341" width="733" height="438" key="#com.intellij.fileTypes.FileTypeChooser/0.34.1920.1046@0.34.1920.1046" timestamp="1612523218628" />
     <state x="860" y="340" width="530" height="605" key="FileChooserDialogImpl" timestamp="1612456355381">
       <screen x="0" y="34" width="1920" height="1046" />
     </state>
