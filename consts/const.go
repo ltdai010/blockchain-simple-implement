@@ -3,7 +3,7 @@ package consts
 //bigset
 
 const BLOCKCHAIN = "blockchain"
-
+const UTXOBUCKET = "chainstate"
 const LASTHASH = "lasthash"
 
 
@@ -15,4 +15,5 @@ const ADDRESS = "address"
 const PRINTCHAIN = "printchain"
 const CREATEWALLET = "createwallet"
 const LISTADDRESS = "listaddress"
+const REINDEXUTXO = "reindexutxo"
 

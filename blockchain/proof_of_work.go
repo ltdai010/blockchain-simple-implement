@@ -14,7 +14,7 @@ type ProofOfWork struct {
 	target *big.Int
 }
 
-const targetBits = 24
+const targetBits = 16
 
 const maxNonce = math.MaxInt64
 

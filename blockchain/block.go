@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"blockchaintest/merkletree"
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
@@ -27,15 +28,14 @@ func (b *Block) SetHash() {
 
 //Hash all Transaction in block
 func (b *Block) HashTransaction() []byte {
-	txHashes := [][]byte{}
-	txHash := [32]byte{}
+	transactions := [][]byte{}
 
 	for _, tx := range b.Transactions {
-		txHashes = append(txHashes, tx.ID)
+		transactions = append(transactions, tx.Serialize())
 	}
-	txHash = sha256.Sum256(bytes.Join(txHashes, []byte{}))
+	tree := merkletree.NewMerkleTree(transactions)
 
-	return txHash[:]
+	return tree.RootNode.Data
 }
 
 //serialize block to byte
